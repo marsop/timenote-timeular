@@ -1,5 +1,5 @@
 """
-A simple linkage between a Timular cube and Hackaru.
+A simple linkage between a Timular cube and Timenote.
 """
 
 import asyncio
@@ -15,6 +15,7 @@ from threading import Lock
 from tkinter import simpledialog
 from typing import Optional
 
+import sys
 import appdirs  # type: ignore
 import requests
 import yamale  # type: ignore
@@ -66,7 +67,6 @@ task-mapping:
 logging.basicConfig()
 logger = logging.getLogger("hackaru_timular")
 logger.setLevel(logging.INFO)
-
 
 state_lock = Lock()
 
@@ -242,39 +242,46 @@ async def main_loop(state: State, killer: GracefulKiller):
 
 def main():
     """Console script entry point"""
-    config_dir = appdirs.user_config_dir(appname="hackaru-timeular")
+    
+    logger.info("Starting script")
+    
+    # config_dir = appdirs.user_config_dir(appname="hackaru-timeular")
 
-    with open(
-        os.path.join(config_dir, "config.yml"), "r", encoding="utf-8"
-    ) as config_file:
+    # with open(
+    #     os.path.join(config_dir, "config.yml"), "r", encoding="utf-8"
+    # ) as config_file:
 
-        config = yaml.safe_load(config_file)
+    #     config = yaml.safe_load(config_file)
 
-        data = yamale.make_data(config_file.name)
-        yamale.validate(CONFIG_SCHEMA, data)
+    #     data = yamale.make_data(config_file.name)
+    #     yamale.validate(CONFIG_SCHEMA, data)
 
-        config["task_endpoint"] = config["hackaru"]["endpoint"] + "/v1/activities"
+    #     config["task_endpoint"] = config["hackaru"]["endpoint"] + "/v1/activities"
 
-        if "cli" not in config:
-            config["cli"] = False
+    #     if "cli" not in config:
+    #         config["cli"] = False
 
-        cookies_file = os.path.join(config_dir, "cookies.txt")
-        session = requests.Session()
-        session.cookies = http.cookiejar.LWPCookieJar(filename=cookies_file)
-        try:
-            session.cookies.load(ignore_discard=True)
-            session.cookies.clear_expired_cookies()
-        except FileNotFoundError:
-            pass
+    #     cookies_file = os.path.join(config_dir, "cookies.txt")
+    #     session = requests.Session()
+    #     session.cookies = http.cookiejar.LWPCookieJar(filename=cookies_file)
+    #     try:
+    #         session.cookies.load(ignore_discard=True)
+    #         session.cookies.clear_expired_cookies()
+    #     except FileNotFoundError:
+    #         pass
 
-        if not session.cookies:
-            login(session, config)
+    #     if not session.cookies:
+    #         login(session, config)
 
-        current_task = session.get(
-            config["task_endpoint"] + "/working", headers=HEADERS
-        ).json()
+    #     current_task = session.get(
+    #         config["task_endpoint"] + "/working", headers=HEADERS
+    #     ).json()
 
-        state = State(config=config, current_task=current_task, session=session)
-        killer = GracefulKiller(state)
+    #     state = State(config=config, current_task=current_task, session=session)
+    #     killer = GracefulKiller(state)
 
-        asyncio.run(main_loop(state, killer))
+    #     asyncio.run(main_loop(state, killer))
+
+
+if __name__ == '__main__':
+    main() 
